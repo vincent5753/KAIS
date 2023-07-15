@@ -65,8 +65,9 @@ EOF
 sudo modprobe overlay
 sudo modprobe br_netfilter
 sudo swapoff -a
-# 感覺壞了?
-sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+# Disable swap
+sed -e '/swap/ s/^#*/# /' -i /etc/fstab
 sudo free -m
 source <(kubectl completion bash)
 echo "source <(kubectl completion bash)" >> ~/.bashrc
