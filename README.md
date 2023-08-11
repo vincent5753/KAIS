@@ -18,4 +18,4 @@ curl https://raw.githubusercontent.com/vincent5753/KAIS/main/nemesis.sh | bash
 ## TDL
 + 環境偵測(Preflight detect)
 + 依據參數部署(Deploy using args)
-+ 自我部署(Self building)
++ 自我部署(Self deploying)
