@@ -3,6 +3,9 @@
 KAIS is short for `Kubernetes Auto Install Script`, it is made for a more easy way for newbies to install kubernetes while keeping the flexibility to have different choice for setting up the cluster. </br>
 KAIS 是 `Kubernete 自動安裝腳本` 的簡稱，其目標為提供新手更簡易建立叢集的方式，並在過程中保持可以調整不同設置的彈性。
 
+`legacy` 為 `舊版` 安裝方式，腳本命名邏輯為 `$發行版-K8s-$K8s_版本-$CRI-$CNI`  </br>
+`legacy` folder is for `old-way` installations, script naming follows the pattern of `$Disto-K8s-$K8s_Version-$CRI-$CNI`
+
 ## Usage / 使用方式
 
 Setting up / 裝環境
