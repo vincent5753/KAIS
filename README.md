@@ -13,7 +13,7 @@ Deploy in one line / 快速部署
 curl https://raw.githubusercontent.com/vincent5753/KAIS/main/legacy/Ubuntu20-K8s_1_28-containerd-flannel.sh| bash
 ```
 
-### Tear down(Clean up) / 拆環境
+### Clean up  / 拆環境
 Clean up in one line / 快速拆除
 ```
 curl https://raw.githubusercontent.com/vincent5753/KAIS/main/nemesis.sh | bash
