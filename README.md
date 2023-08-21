@@ -10,7 +10,7 @@ KAIS 是 `Kubernete 自動安裝腳本` 的簡稱，其目標為提供新手更�
 
 Deploy in one line / 快速部署
 ```
-curl https://raw.githubusercontent.com/vincent5753/KAIS/main/legacy/Ubuntu20-K8s_1_28-containerd-flannel.sh| bash
+curl https://raw.githubusercontent.com/vincent5753/KAIS/main/legacy/Ubuntu20-K8s_1_28-containerd-flannel.sh | bash
 ```
 
 ### Clean up  / 拆環境
