@@ -9,7 +9,8 @@ KAIS is short for `Kubernetes Auto Install Script`, it is made for a more easy w
 `legacy` 為 `舊版` 安裝方式，腳本命名邏輯為 `$發行版-K8s-$K8s_版本-$CRI-$CNI`  </br>
 `legacy` folder is for `old-way` installations, script naming follows the pattern of `$Disto-K8s-$K8s_Version-$CRI-$CNI` </br>
 
-快速部署(最新版本) / Deploy in one line(latest version)
+快速部署(最新版本) / Deploy in one line(latest version) </br>
+作業系統 / OS: `Ubuntu 20.04` </br>
 ```
 curl https://raw.githubusercontent.com/vincent5753/KAIS/main/latest/Ubuntu2004-K8s_latest-containerd-flannel.sh | bash
 ```
