@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install bacsic packages
-sudo apt-get install -y apt-transport-https ca-certificates curl gnupg containerd.io
+sudo apt-get install -y apt-transport-https ca-certificates curl gnupg containerd
 
 # containerd
 sudo mkdir -p /etc/containerd
