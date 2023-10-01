@@ -16,4 +16,5 @@ sudo rm -rf /var/run/docker.sock
 
 sudo systemctl stop containerd
 sudo dpkg --purge containerd.io
+sudo dpkg --purge containerd
 sudo rm -rf /var/lib/containerd/
