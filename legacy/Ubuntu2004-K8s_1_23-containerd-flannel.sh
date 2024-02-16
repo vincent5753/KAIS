@@ -42,7 +42,7 @@ sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
 sudo apt update
 
 # Install k8s packages
-version=1.23.6-00
+version=1.23.17-00
 echo $version
 apt-cache show kubectl | grep "Version: $version"
 sudo apt install -y kubelet=$version kubectl=$version kubeadm=$version
