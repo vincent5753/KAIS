@@ -1,9 +1,6 @@
+#!/bin/bash
+
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
-
-# Add Docker office gpg key
-
-#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-#echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
 
 # Install Docker From Docker Official
 curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/containerd.io_1.5.10-1_amd64.deb
@@ -57,30 +54,21 @@ source <(kubectl completion bash)
 echo "source <(kubectl completion bash)" >> ~/.bashrc
 
 # Init cluster
-## For Master Node
-
-# flannel config
-#sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --v=6
-# calico config
 sudo kubeadm init --pod-network-cidr=192.168.0.0/16
-### Copy Config
+## Copy Config
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-### Flannel CNI
-#kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
 ### calico CNI
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/tigera-operator.yaml
 kubectl create -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/custom-resources.yaml
 
-
-### Waiting until Ready
+## Waiting until Ready
 kubectl cluster-info
 watch -n 1 kubectl get nodes
 watch kubectl get pods -n calico-system
 
-### Taint(if needed)
+## Taint(if needed)
 kubectl taint nodes --all node-role.kubernetes.io/master-
 #kubectl taint nodes --all node-role.kubernetes.io/control-plane- node-role.kubernetes.io/master-
-
