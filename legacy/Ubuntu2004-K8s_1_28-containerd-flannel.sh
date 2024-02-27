@@ -65,17 +65,17 @@ sudo apt install -y kubelet=$version kubectl=$version kubeadm=$version
 sudo apt-mark hold kubelet kubeadm kubectl
 sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --v=6
 
-### Copy Config
+## Copy Config
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-### Flannel CNI
+## Flannel CNI
 kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
 
-### Waiting until Ready
+## Waiting until Ready
 kubectl cluster-info
 watch -n 1 kubectl get nodes -o wide
 
-### Taint(if needed)
+## Taint(if needed)
 kubectl taint nodes --all node-role.kubernetes.io/control-plane-
