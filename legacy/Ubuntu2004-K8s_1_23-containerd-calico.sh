@@ -2,6 +2,8 @@
 
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 
+mkdir debfiles && cd debfiles
+
 # Install Docker From Docker Official
 curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/containerd.io_1.5.10-1_amd64.deb
 curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/docker-ce_20.10.9~3-0~ubuntu-focal_amd64.deb
