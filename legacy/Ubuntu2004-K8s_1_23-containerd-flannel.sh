@@ -4,6 +4,8 @@
 # Install basic packages
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 
+mkdir debfiles && cd debfiles
+
 # Install Docker From Docker Official
 curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/containerd.io_1.5.10-1_amd64.deb
 curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/docker-ce_20.10.9~3-0~ubuntu-focal_amd64.deb
@@ -32,17 +34,14 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker
 systemctl status --no-pager docker
 
-# Add k8s Repo
-sudo su -c "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -"
-sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
-sudo apt update
-
-# Install k8s packages
-version=1.23.17-00
-echo $version
-apt-cache show kubectl | grep "Version: $version"
-sudo apt install -y kubelet=$version kubectl=$version kubeadm=$version
-sudo apt-mark hold kubelet kubeadm kubectl
+# Pull k8s from legacy repo
+wget https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/cri-tools_1.26.0-00_amd64_5ba786e8853986c7f9f51fe850086083e5cf3c3d34f3fc09aaadd63fa0b578df.deb
+wget https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/kubeadm_1.23.17-00_amd64.deb
+wget https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/kubectl_1.23.17-00_amd64.deb
+wget https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/kubelet_1.23.17-00_amd64.deb
+wget https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/kubernetes-cni_1.2.0-00_amd64_0c2be3775ea591dee9ce45121341dd16b3c752763c6898adc35ce12927c977c1.deb
+sudo apt install -y ./*.deb
+rm ./*.deb
 
 # Pull Image
 sudo docker pull k8s.gcr.io/kube-apiserver-amd64:v1.23.17
