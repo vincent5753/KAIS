@@ -1,4 +1,5 @@
 #!/bin/bash
+# 1st commit By VP@240405 (多重任務炸裂中XD)
 
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg wget
 sudo mkdir -m 755 /etc/apt/keyrings/
