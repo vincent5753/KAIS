@@ -40,6 +40,14 @@ EOF
 sudo modprobe overlay
 sudo modprobe br_netfilter
 
+# for using crictl with containerd
+cat << EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+timeout: 5
+debug: false
+EOF
+
 sudo bash -c 'echo net.bridge.bridge-nf-call-ip6tables=1 >> /etc/sysctl.conf'
 sudo bash -c 'echo net.bridge.bridge-nf-call-iptables=1 >> /etc/sysctl.conf'
 sudo bash -c 'echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf'
