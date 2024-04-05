@@ -40,14 +40,6 @@ EOF
 sudo modprobe overlay
 sudo modprobe br_netfilter
 
-#cat << EOF | sudo tee /etc/sysctl.conf
-#net.bridge.bridge-nf-call-ip6tables=1
-#net.bridge.bridge-nf-call-iptables=1
-#net.ipv4.ip_forward=1
-#vm.swappiness=0
-#EOF
-#sudo sysctl -p
-
 sudo bash -c 'echo net.bridge.bridge-nf-call-ip6tables=1 >> /etc/sysctl.conf'
 sudo bash -c 'echo net.bridge.bridge-nf-call-iptables=1 >> /etc/sysctl.conf'
 sudo bash -c 'echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf'
@@ -57,7 +49,7 @@ sudo sysctl -p
 sudo sed -i 's/sandbox_image = "k8s.gcr.io\/pause:3.6"/sandbox_image = "registry.k8s.io\/pause:3.6"/g' /etc/containerd/config.toml
 sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
 
-sudo systemctl restart containerd
+sudo systemctl --no-pager --full restart containerd
 systemctl status containerd --no-pager
 kubeadm config images list --image-repository=registry.k8s.io --kubernetes-version=v1.24.17
 kubeadm config images pull --image-repository=registry.k8s.io --kubernetes-version=v1.24.17
