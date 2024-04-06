@@ -42,10 +42,10 @@ systemctl status --no-pager docker
 # Pull k8s from legacy repo
 K8S_DEB=(
   cri-tools_1.26.0-00_amd64_5ba786e8853986c7f9f51fe850086083e5cf3c3d34f3fc09aaadd63fa0b578df.deb \
+  kubernetes-cni_1.2.0-00_amd64_0c2be3775ea591dee9ce45121341dd16b3c752763c6898adc35ce12927c977c1.deb \
   kubectl_1.23.17-00_amd64.deb \
   kubelet_1.23.17-00_amd64.deb \
-  kubeadm_1.23.17-00_amd64.deb \
-  kubernetes-cni_1.2.0-00_amd64_0c2be3775ea591dee9ce45121341dd16b3c752763c6898adc35ce12927c977c1.deb
+  kubeadm_1.23.17-00_amd64.deb
 )
 for DEB in ${K8S_DEB[@]}
 do
@@ -64,7 +64,7 @@ sudo modprobe br_netfilter
 sudo swapoff -a
 
 # Disable swap
-sed -e '/swap/ s/^#*/# /' -i /etc/fstab
+sudo sed -e '/swap/ s/^#*/# /' -i /etc/fstab
 sudo free -m
 source <(kubectl completion bash)
 echo "source <(kubectl completion bash)" >> ~/.bashrc
