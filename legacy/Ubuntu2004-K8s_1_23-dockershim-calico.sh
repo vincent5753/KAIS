@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Install basic packages
+sudo apt-get update -y
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 
 mkdir debfiles && cd debfiles
