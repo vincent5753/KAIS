@@ -1,17 +1,24 @@
 #!/bin/bash
 
 # Install basic packages
+sudo apt-get update -y
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 
 # Install Docker From Docker Official
-curl -Ol https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/containerd.io_1.5.10-1_amd64.deb
-curl -Ol https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/docker-ce_20.10.24~3-0~ubuntu-jammy_amd64.deb
-curl -Ol https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/docker-ce-cli_20.10.24~3-0~ubuntu-jammy_amd64.deb
-sudo dpkg -i *.deb
-rm *.deb
+DOCKER_DEB=(
+  containerd.io_1.5.10-1_amd64.deb \
+  docker-ce-cli_20.10.9~3-0~ubuntu-focal_amd64.deb \
+  docker-ce_20.10.9~3-0~ubuntu-focal_amd64.deb
+)
+for DEB in ${DOCKER_DEB[@]}
+do
+  curl -s --create-dirs -o /tmp/docker_debs/$DEB https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/$DEB
+  sudo dpkg -i /tmp/docker_debs/$DEB
+  sudo rm -rf /tmp/docker_debs
+done
+
 sudo usermod -aG docker $USER
-sudo systemctl start docker
-sudo systemctl enable docker
+sudo systemctl enable docker --now
 sudo docker version
 
 # change docker cgroup driver to systemd
@@ -43,15 +50,6 @@ apt-cache show kubectl | grep "Version: $version"
 sudo apt install -y kubelet=$version kubectl=$version kubeadm=$version
 sudo apt-mark hold kubelet kubeadm kubectl
 
-# Pull Image
-sudo docker pull k8s.gcr.io/kube-apiserver-amd64:v1.23.17
-sudo docker pull k8s.gcr.io/kube-controller-manager-amd64:v1.23.17
-sudo docker pull k8s.gcr.io/kube-scheduler-amd64:v1.23.17
-sudo docker pull k8s.gcr.io/kube-proxy-amd64:v1.23.17
-sudo docker pull k8s.gcr.io/pause:3.6
-sudo docker pull k8s.gcr.io/etcd:3.5.1-0
-sudo docker pull k8s.gcr.io/coredns/coredns:v1.8.6
-
 # Essential Tweaks
 cat << EOF | sudo tee /etc/modules-load.d/containerd.conf
 overlay
@@ -66,6 +64,18 @@ sed -e '/swap/ s/^#*/# /' -i /etc/fstab
 sudo free -m
 source <(kubectl completion bash)
 echo "source <(kubectl completion bash)" >> ~/.bashrc
+
+# Pre-Pull Kubernetes Component Image
+# sudo docker pull registry.k8s.io/kube-apiserver-amd64:v1.23.17
+# sudo docker pull registry.k8s.io/kube-controller-manager-amd64:v1.23.17
+# sudo docker pull registry.k8s.io/kube-scheduler-amd64:v1.23.17
+# sudo docker pull registry.k8s.io/kube-proxy-amd64:v1.23.17
+# sudo docker pull registry.k8s.io/pause:3.6
+# sudo docker pull registry.k8s.io/etcd:3.5.1-0
+# sudo docker pull registry.k8s.io/coredns/coredns:v1.8.6
+# https://kubernetes.io/docs/reference/setup-tools/kubeadm/generated/kubeadm_config_images_pull/
+kubeadm config images list --image-repository=registry.k8s.io --kubernetes-version=v1.23.17
+kubeadm config images pull --image-repository=registry.k8s.io --kubernetes-version=v1.23.17
 
 # Init cluster
 sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --v=6

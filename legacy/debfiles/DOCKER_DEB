@@ -1,0 +1,14 @@
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<h1>404 Not Found</h1>
+<ul>
+<li>Code: NoSuchKey</li>
+<li>Message: The specified key does not exist.</li>
+<li>Key: linux/ubuntu/dists/focal/pool/stable/amd64/DOCKER_DEB</li>
+<li>RequestId: FTMEK3STZ2X6K73Z</li>
+<li>HostId: eeVNVna25qXhw2QLC390mcD/GfAzmHclDB2CMPyQosx+/8Z1BLI+JWUh2VYwJlFjNsxl0D2d3Eg=</li>
+</ul>
+<hr/>
+</body>
+</html>

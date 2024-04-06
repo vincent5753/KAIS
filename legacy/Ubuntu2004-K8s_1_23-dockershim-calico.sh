@@ -5,11 +5,19 @@ sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 mkdir debfiles && cd debfiles
 
 # Install Docker From Docker Official
-curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/containerd.io_1.5.10-1_amd64.deb
-curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/docker-ce_20.10.9~3-0~ubuntu-focal_amd64.deb
-curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/docker-ce-cli_20.10.9~3-0~ubuntu-focal_amd64.deb
-sudo dpkg -i *.deb
-rm *.deb
+# Install Docker From Docker Official
+DOCKER_DEB=(
+  containerd.io_1.5.10-1_amd64.deb \
+  docker-ce-cli_20.10.9~3-0~ubuntu-focal_amd64.deb \
+  docker-ce_20.10.9~3-0~ubuntu-focal_amd64.deb
+)
+for DEB in ${DOCKER_DEB[@]}
+do
+  curl -s --create-dirs -o /tmp/docker_debs/$DEB https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/$DEB
+  sudo dpkg -i /tmp/docker_debs/$DEB
+  sudo rm -rf /tmp/docker_debs
+done
+
 sudo usermod -aG docker $USER
 sudo systemctl start docker
 sudo systemctl enable docker
@@ -33,13 +41,19 @@ sudo systemctl restart docker
 systemctl status --no-pager docker
 
 # Pull k8s from legacy repo
-wget https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/cri-tools_1.26.0-00_amd64_5ba786e8853986c7f9f51fe850086083e5cf3c3d34f3fc09aaadd63fa0b578df.deb
-wget https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/kubeadm_1.23.17-00_amd64.deb
-wget https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/kubectl_1.23.17-00_amd64.deb
-wget https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/kubelet_1.23.17-00_amd64.deb
-wget https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/kubernetes-cni_1.2.0-00_amd64_0c2be3775ea591dee9ce45121341dd16b3c752763c6898adc35ce12927c977c1.deb
-sudo apt install -y ./*.deb
-rm ./*.deb
+K8S_DEB=(
+  cri-tools_1.26.0-00_amd64_5ba786e8853986c7f9f51fe850086083e5cf3c3d34f3fc09aaadd63fa0b578df.deb \
+  kubectl_1.23.17-00_amd64.deb \
+  kubelet_1.23.17-00_amd64.deb \
+  kubeadm_1.23.17-00_amd64.deb \
+  kubernetes-cni_1.2.0-00_amd64_0c2be3775ea591dee9ce45121341dd16b3c752763c6898adc35ce12927c977c1.deb
+)
+for DEB in ${K8S_DEB[@]}
+do
+  wget -P /tmp/k8s_debs https://github.com/vincent5753/KAIS/raw/main/legacy/deb/1.23/$DEB
+  sudo apt install -y /tmp/k8s_debs/$DEB
+  sudo rm -rf /tmp/k8s_debs
+done
 
 # Essential Tweaks
 cat << EOF | sudo tee /etc/modules-load.d/containerd.conf
