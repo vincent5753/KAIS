@@ -69,5 +69,5 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 kubectl taint nodes --all node-role.kubernetes.io/master-
 kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+kubectl apply -f https://github.com/flannel-io/flannel/releases/download/v0.24.4/kube-flannel.yml
 watch -n 5 kubectl get po -A -o wide
-kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
