@@ -2,6 +2,7 @@
 
 echo "[info] running preflight checks!"
 
+os_detect() {
 arch=$(uname -m)
 echo "${arch}"
 
@@ -19,3 +20,7 @@ case "${arch}" in
     echo "unknow arch"
     ;;
 esac
+# TDL Platform / Distro
+}
+
+os_detect
