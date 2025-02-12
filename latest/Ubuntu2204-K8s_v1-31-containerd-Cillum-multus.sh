@@ -70,7 +70,7 @@ mkdir -p $HOME/.kube
 # Copy the kubeconfig file to the .kube directory
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 # Change ownership of the kubeconfig file to your user
-sudo chown $HOME/.kube
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # set up autocomplete in bash into the current shell, bash-completion package should be installed first.
 source <(kubectl completion bash) 
