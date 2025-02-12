@@ -64,13 +64,13 @@ sudo apt-mark hold kubelet kubeadm kubectl
 
 sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --v=6
 
-kubectl taint node --all node-role.kubernetes.io/control-plane:NoSchedule-
-
 mkdir -p $HOME/.kube
 # Copy the kubeconfig file to the .kube directory
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 # Change ownership of the kubeconfig file to your user
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl taint node --all node-role.kubernetes.io/control-plane:NoSchedule-
 
 # set up autocomplete in bash into the current shell, bash-completion package should be installed first.
 source <(kubectl completion bash) 
@@ -87,4 +87,3 @@ rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 
 # install cillum with cni-exclusive OFF
 cilium install --version 1.16.5 --set cni.exclusive=false
-
