@@ -1,9 +1,11 @@
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 
 # Install Docker From Docker Official
-curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/containerd.io_1.7.25-1_amd64.deb
-curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/docker-ce_27.5.1-1~ubuntu.20.04~focal_amd64.deb
-curl -Ol https://download.docker.com/linux/ubuntu/dists/focal/pool/stable/amd64/docker-ce-cli_27.5.1-1~ubuntu.20.04~focal_amd64.deb
+curl -Ol https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/containerd.io_1.7.25-1_amd64.deb
+curl -Ol https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/docker-ce_27.5.1-1~ubuntu.22.04~jammy_amd64.deb
+curl -Ol https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/docker-ce-rootless-extras_27.5.1-1~ubuntu.22.04~jammy_amd64.deb
+curl -Ol https://download.docker.com/linux/ubuntu/dists/jammy/pool/stable/amd64/docker-ce-cli_27.5.1-1~ubuntu.22.04~jammy_amd64.deb
+
 sudo dpkg -i *.deb
 rm *.deb
 sudo usermod -aG docker $USER
