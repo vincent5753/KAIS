@@ -1,9 +1,9 @@
 sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
 
 # Install containerd v2.0.2
-curl -Ol https://github.com/containerd/containerd/releases/download/v2.0.2/containerd-2.0.2-linux-amd64.tar.gz
+wget  https://github.com/containerd/containerd/releases/download/v2.0.2/containerd-2.0.2-linux-amd64.tar.gz
 curl -Ol https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
-sudo tar Cxzvf /usr/local containerd-1.6.2-linux-amd64.tar.gz
+sudo tar Cxzvf /usr/local containerd-2.0.2-linux-amd64.tar.gz
 
 # Set Containerd to start via systemd
 sudo mv containerd.service /lib/systemd/system/containerd.service
@@ -11,13 +11,13 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now containerd
 
 # install runc
-curl -Ol https://github.com/opencontainers/runc/releases/download/v1.2.4/runc.amd64
+wget https://github.com/opencontainers/runc/releases/download/v1.2.4/runc.amd64
 sudo install -m 755 runc.amd64 /usr/local/sbin/runc
 
 # install containderd CNI plugin
-curl -Ol https://github.com/containernetworking/plugins/releases/download/v1.6.2/cni-plugins-linux-amd64-v1.6.2.tgz
+wget https://github.com/containernetworking/plugins/releases/download/v1.6.2/cni-plugins-linux-amd64-v1.6.2.tgz
 sudo mkdir -p /opt/cni/bin
-sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.1.1.tgz
+sudo tar Cxzvf /opt/cni/bin cni-plugins-linux-amd64-v1.6.2.tgz
 
 # remove file after installed
 sudo rm *.tar.gz runc.amd64 *.tgz
