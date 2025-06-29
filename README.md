@@ -21,7 +21,7 @@ curl https://raw.githubusercontent.com/vincent5753/KAIS/main/latest/Ubuntu2004-K
 如果你想安裝舊版本 </br>
 If you want to install an older version.
 ```
-curl https://raw.githubusercontent.com/vincent5753/KAIS/main/legacy/Ubuntu2004-K8s_1_24-containerd-flannel.sh | bash
+curl https://raw.githubusercontent.com/vincent5753/KAIS/main/legacy/Ubuntu2404-K8s_1_33-containerd-flannel.sh | bash
 ```
 
 ### 拆環境 / Clean up
