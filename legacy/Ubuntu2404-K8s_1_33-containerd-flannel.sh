@@ -167,7 +167,7 @@ remove_node_taint(){
 }
 
 _clean_up(){
-    sudo rf -rf "${TEMP_DIR}"
+    sudo rm -rf "${TEMP_DIR}"
 }
 
 _mk_tmp_dir
