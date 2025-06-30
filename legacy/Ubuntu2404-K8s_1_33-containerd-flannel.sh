@@ -20,10 +20,15 @@ DOCKER_DEB=(
     docker-ce-cli_28.3.0-1~ubuntu.24.04~noble_amd64.deb
 )
 
-K8S_PACKAGE=(
+K8S_CONTROL_PLANE_PACKAGE=(
     kubelet
     kubeadm
     kubectl
+)
+
+K8S_WORKER_NODE_PACKAGE=(
+    kubelet
+    kubeadm
 )
 
 _mk_tmp_dir(){
@@ -175,8 +180,8 @@ install_apt_packages "${PACKAGES_TO_INSTALL[@]}"
 install_docker_runtime
 add_k8s_apt_repo
 do_k8s_tweaks
-install_apt_packages "${K8S_PACKAGE[@]}"
-mark_apt_packages "${K8S_PACKAGE[@]}"
+install_apt_packages "${K8S_CONTROL_PLANE_PACKAGE[@]}"
+mark_apt_packages "${K8S_CONTROL_PLANE_PACKAGE[@]}"
 sudo systemctl enable --now kubelet
 sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --image-repository=registry.k8s.io --v=6
 copy_kube_config
