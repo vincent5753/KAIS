@@ -55,6 +55,7 @@ _error(){
 }
 
 
+
 check_command_available(){
 
     local command_name="$1"
