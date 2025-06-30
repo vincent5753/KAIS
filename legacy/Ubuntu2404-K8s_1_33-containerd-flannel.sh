@@ -45,6 +45,16 @@ _clean_up(){
 }
 
 
+_info(){
+    echo "[INFO] $1"
+}
+
+
+_error(){
+    echo "[ERROR] $1"
+}
+
+
 check_command_available(){
 
     local command_name="$1"
