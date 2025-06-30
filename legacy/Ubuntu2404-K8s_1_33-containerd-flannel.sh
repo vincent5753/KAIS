@@ -31,9 +31,19 @@ K8S_WORKER_NODE_PACKAGE=(
     kubeadm
 )
 
+
+
 _mk_tmp_dir(){
     mkdir "${TEMP_DIR}"
 }
+
+
+_clean_up(){
+
+    sudo rm -rf "${TEMP_DIR}"
+
+}
+
 
 check_command_available(){
 
@@ -49,6 +59,7 @@ check_command_available(){
     fi
 
 }
+
 
 install_apt_packages(){
 
@@ -80,6 +91,7 @@ install_apt_packages(){
 
 }
 
+
 mark_apt_packages(){
 
     if [ "$#" -eq 0 ]; then
@@ -90,6 +102,7 @@ mark_apt_packages(){
     sudo apt-mark hold "$@"
 
 }
+
 
 install_docker_runtime(){
 
@@ -137,13 +150,18 @@ EOF
 
 }
 
+
 add_k8s_apt_repo(){
+
     curl -fsSL "https://pkgs.k8s.io/core:/stable:/v${K8S_VER}/deb/Release.key" | sudo gpg --yes --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
     echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${K8S_VER}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
     sudo apt-get update
+
 }
 
+
 do_k8s_tweaks(){
+
     sudo swapoff -a
     sudo sed -i '/swap/s/^/#/' /etc/fstab
 cat << EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -158,22 +176,27 @@ net.bridge.bridge-nf-call-ip6tables = 1
 net.ipv4.ip_forward                 = 1
 EOF
     sudo sysctl --system
+
 }
 
+
 copy_kube_config(){
+
     mkdir -p $HOME/.kube
     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
     sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
 }
+
 
 remove_node_taint(){
+
     kubectl taint nodes --all node-role.kubernetes.io/master-
     kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+
 }
 
-_clean_up(){
-    sudo rm -rf "${TEMP_DIR}"
-}
+
 
 _mk_tmp_dir
 install_apt_packages "${PACKAGES_TO_INSTALL[@]}"
