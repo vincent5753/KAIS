@@ -257,8 +257,11 @@ remove_node_taint(){
 
 main(){
 
+    # Create tmp dir for KAIS
     _mk_tmp_dir
+    # Install essential packages for kubernetes
     install_apt_packages "${PACKAGES_TO_INSTALL[@]}"
+    # Install Container Runtime (Docker)
     _get_latest_docker_version
     if [ -z "$containerd_version" ] || [ -z "$dockerce_version" ] || [ -z "$dockercecli_version" ]; then
         _error "Could not determine all latest Docker package versions. One or more version variables are empty."
@@ -269,6 +272,7 @@ main(){
         "docker-ce-cli_${dockercecli_version}~ubuntu.${OS_CODE_NAME}_${CPU_ARCH}.deb"
     )
     install_docker_runtime
+    # Install kubernetes
     add_k8s_apt_repo
     do_k8s_tweaks
     install_apt_packages "${K8S_CONTROL_PLANE_PACKAGE[@]}"
@@ -277,6 +281,7 @@ main(){
     sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --image-repository=registry.k8s.io --v=6
     copy_kube_config
     remove_node_taint
+    # Apply CNI
     kubectl apply -f https://github.com/flannel-io/flannel/releases/download/v0.24.4/kube-flannel.yml
     _clean_up
 
