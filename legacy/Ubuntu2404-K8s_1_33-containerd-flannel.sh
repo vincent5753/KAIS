@@ -55,6 +55,39 @@ _error(){
 }
 
 
+_get_latest_docker_version(){
+
+    request_result=$(curl https://download.docker.com/linux/ubuntu/dists/${OS_CODE_NAME}/pool/stable/${CPU_ARCH}/)
+
+    for package in docker-ce docker-ce-cli containerd.io
+    do
+
+        package_version=$(echo "${request_result}" | grep "${package}_" | sed -n "s/.*${package}_\([^_]*\)_amd64\.deb.*/\1/p" | sort -V | tail -n 1 | cut -d'~' -f1)
+
+    case "${package}" in
+
+        docker-ce)
+        dockerce_version="${package_version}"
+        ;;
+
+        docker-ce-cli)
+        dockercecli_version="${package_version}"
+        ;;
+
+        containerd.io)
+        containerd_version="${package_version}"
+        ;;
+
+        *)
+        _error "Not expected package."
+        ;;
+    esac
+
+    done
+
+}
+
+
 
 check_command_available(){
 
