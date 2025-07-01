@@ -62,7 +62,7 @@ _get_latest_docker_version(){
     for package in docker-ce docker-ce-cli containerd.io
     do
 
-        package_version=$(echo "${request_result}" | grep "${package}_" | sed -n "s/.*${package}_\([^_]*\)_amd64\.deb.*/\1/p" | sort -V | tail -n 1 | cut -d'~' -f1)
+        package_version=$(echo "${request_result}" | grep "${package}_" | sed -n "s/.*${package}_\([^_]*\)_${CPU_ARCH}\.deb.*/\1/p" | sort -V | tail -n 1 | cut -d'~' -f1)
 
     case "${package}" in
 
