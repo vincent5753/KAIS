@@ -57,6 +57,7 @@ _error(){
 
 _get_latest_docker_version(){
 
+    local request_result
     request_result=$(curl https://download.docker.com/linux/ubuntu/dists/${OS_CODE_NAME}/pool/stable/${CPU_ARCH}/)
 
     for package in docker-ce docker-ce-cli containerd.io
@@ -79,7 +80,7 @@ _get_latest_docker_version(){
         ;;
 
         *)
-        _error "Not expected package."
+        _error "Unexpected package."
         ;;
     esac
 
