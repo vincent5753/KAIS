@@ -259,6 +259,15 @@ main(){
 
     _mk_tmp_dir
     install_apt_packages "${PACKAGES_TO_INSTALL[@]}"
+    _get_latest_docker_version
+    if [ -z "$containerd_version" ] || [ -z "$dockerce_version" ] || [ -z "$dockercecli_version" ]; then
+        _error "Could not determine all latest Docker package versions. One or more version variables are empty."
+    fi
+    DOCKER_DEB=(
+        "containerd.io_${containerd_version}_${CPU_ARCH}.deb"
+        "docker-ce_${dockerce_version}~ubuntu.${OS_CODE_NAME}_${CPU_ARCH}.deb"
+        "docker-ce-cli_${dockercecli_version}~ubuntu.${OS_CODE_NAME}_${CPU_ARCH}.deb"
+    )
     install_docker_runtime
     add_k8s_apt_repo
     do_k8s_tweaks
