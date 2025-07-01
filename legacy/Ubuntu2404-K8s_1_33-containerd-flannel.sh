@@ -283,6 +283,7 @@ main(){
     remove_node_taint
     ## Apply CNI
     kubectl apply -f https://github.com/flannel-io/flannel/releases/download/v0.24.4/kube-flannel.yml
+    # Bye
     _clean_up
 
 }
