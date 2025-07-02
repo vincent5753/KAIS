@@ -268,8 +268,8 @@ main(){
     fi
     DOCKER_DEB=(
         "containerd.io_${containerd_version}_${CPU_ARCH}.deb"
-        "docker-ce_${dockerce_version}~ubuntu.${OS_CODE_NAME}_${CPU_ARCH}.deb"
-        "docker-ce-cli_${dockercecli_version}~ubuntu.${OS_CODE_NAME}_${CPU_ARCH}.deb"
+        "docker-ce_${dockerce_version}~ubuntu.${OS_RELESE_VER}~${OS_CODE_NAME}_${CPU_ARCH}.deb"
+        "docker-ce-cli_${dockercecli_version}~ubuntu.${OS_RELESE_VER}~${OS_CODE_NAME}_${CPU_ARCH}.deb"
     )
     install_docker_runtime
     # Install Kubernetes
