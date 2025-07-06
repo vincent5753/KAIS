@@ -8,7 +8,7 @@ Current Supported ENVs
 |OS/Arch|amd64|arm64|other|
 |-|:-:|:-:|:-:|
 |Ubuntu|✅|✅|❌|
-|Rocky Linux|To be Verified|✅|❌|
+|Rocky Linux|✅|✅|❌|
 |Debian|To be added|To be added|❌|
 
 ## 使用方式 / Usage
