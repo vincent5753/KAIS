@@ -9,6 +9,7 @@ Current Supported ENVs
 |-|:-:|:-:|:-:|
 |Ubuntu|✅|✅|❌|
 |Rocky Linux|✅|✅|❌|
+|RHEL|To be Verified|✅|❌|
 |Debian|To be added|To be added|❌|
 
 ## 使用方式 / Usage
@@ -22,7 +23,7 @@ Current Supported ENVs
 curl https://raw.githubusercontent.com/vincent5753/KAIS/main/latest/Ubuntu-K8s_latest-containerd-flannel.sh | bash
 ```
 
-作業系統 / OS: `Rocky Linux (amd64/arm64)`
+作業系統 / OS: `Rocky Linux / RHEL (amd64/arm64)`
 ```
 curl https://raw.githubusercontent.com/vincent5753/KAIS/refs/heads/main/latest/Rocky_Linux-K8s_latest-containerd-flannel.sh | bash
 ```
