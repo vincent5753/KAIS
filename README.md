@@ -9,7 +9,7 @@ Current Supported ENVs
 |-|:-:|:-:|:-:|
 |Ubuntu|✅|✅|❌|
 |Rocky Linux|✅|✅|❌|
-|RHEL|To be Verified|✅|❌|
+|RHEL|✅|✅|❌|
 |Debian|To be added|To be added|❌|
 
 ## 使用方式 / Usage
