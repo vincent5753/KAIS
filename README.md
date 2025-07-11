@@ -10,7 +10,8 @@ Current Supported ENVs
 |Ubuntu|✅|✅|❌|24@250705|
 |Rocky Linux|✅|✅|❌|10@250706|
 |RHEL|✅|✅|❌|10@250711|
-|Debian|To be added|To be added|❌|
+|Debian|To be added|To be added|❌|N/A|
+
 
 ## 使用方式 / Usage
 ### 裝環境 / Setting up
