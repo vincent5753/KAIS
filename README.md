@@ -11,6 +11,7 @@ Current Supported ENVs
 |Rocky Linux|✅|✅|❌|10@250706|
 |RHEL|✅|✅|❌|10@250711|
 |Debian|To be added|To be added|❌|N/A|
+|Arch|To be added|To be added|❌|N/A|
 
 
 ## 使用方式 / Usage
