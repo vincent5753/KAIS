@@ -10,7 +10,7 @@ Current Supported ENVs
 |Ubuntu|✅|✅|❌|24@250705|
 |Rocky Linux|✅|✅|❌|10@250706|
 |RHEL|✅|✅|❌|10@250711|
-|Debian|To be added|To be added|❌|N/A|
+|Debian|To be added|✅|❌|12@250717|
 |Arch|To be added|To be added|❌|N/A|
 
 
