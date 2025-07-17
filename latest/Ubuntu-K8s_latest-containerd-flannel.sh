@@ -47,7 +47,7 @@ _error(){
 _get_latest_docker_version(){
 
     local request_result
-    request_result=$(curl https://download.docker.com/linux/ubuntu/dists/${OS_CODE_NAME}/pool/stable/${CPU_ARCH}/)
+    request_result=$(curl https://download.docker.com/linux/${OS_ID}/dists/${OS_CODE_NAME}/pool/stable/${CPU_ARCH}/)
 
     for package in docker-ce docker-ce-cli containerd.io
     do
@@ -99,7 +99,24 @@ get_os_info(){
 
     OS_RELESE_VER=$(lsb_release -r -s 2>/dev/null)
     OS_CODE_NAME=$(lsb_release -c -s 2>/dev/null)
+    OS_ID=$(lsb_release -i -s 2>/dev/null)
 
+        case "${OS_ID}" in
+
+            Debian)
+            OS_ID="debian"
+            ;;
+
+            Ubuntu)
+            OS_ID="ubuntu"
+            ;;
+
+            *)
+            _error "Unexpected Distro ID."
+            exit 1
+            ;;
+        esac
+    _info "Detected OS_ID: ${OS_ID}"
     _info "Detected OS_CODE_NAME: ${OS_CODE_NAME}"
     _info "Detected OS_RELESE_VER: ${OS_RELESE_VER}"
 
@@ -212,7 +229,7 @@ install_docker_runtime(){
         install_apt_packages iptables
     fi
 
-    base_url="https://download.docker.com/linux/ubuntu/dists/${OS_CODE_NAME}/pool/stable/${CPU_ARCH}"
+    base_url="https://download.docker.com/linux/${OS_ID}/dists/${OS_CODE_NAME}/pool/stable/${CPU_ARCH}"
 
     _info "Download and installing debs from docker"
     for DEB in ${DOCKER_DEB[@]}
