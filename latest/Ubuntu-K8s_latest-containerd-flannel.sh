@@ -284,9 +284,14 @@ add_k8s_apt_repo(){
 do_k8s_tweaks(){
 
     _info "Doing some system tweaks needed by kubertes"
+
     _info "Disabling off swap"
     sudo swapoff -a
     sudo sed -i '/swap/s/^/#/' /etc/fstab
+    [ ! -d "/etc/systemd/system-generators" ] && sudo mkdir -p "/etc/systemd/system-generators" && _info "Created path: /etc/systemd/system-generators"
+    _info "Link /dev/null to /etc/systemd/system-generators/systemd-gpt-auto-generator to avoid systemd auto generate swap service"
+    sudo ln -s /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
+
 cat << EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
