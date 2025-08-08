@@ -21,7 +21,7 @@ Current Supported ENVs
 
 快速部署(最新版本) / Deploy in one line(latest version)\
 
-如果你懶得找特定的發行版 (跑這隻通用安裝腳本) / If you are lazy finding you distro info (Run this unified install script)
+如果你懶得找特定的發行版，跑這隻通用安裝腳本 / If you are lazy finding you distro info, run this unified install script
 ```
 curl https://raw.githubusercontent.com/vincent5753/KAIS/main/latest/Unified-K8s_latest-containerd-flannel.sh | bash
 ```
