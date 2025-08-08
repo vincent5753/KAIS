@@ -26,7 +26,7 @@ Current Supported ENVs
 curl https://raw.githubusercontent.com/vincent5753/KAIS/main/latest/Unified-K8s_latest-containerd-flannel.sh | bash
 ```
 
-作業系統 / OS: `Ubuntu (amd64/arm64)`
+作業系統 / OS: `Ubuntu / Debian (amd64/arm64)`
 ```
 curl https://raw.githubusercontent.com/vincent5753/KAIS/main/latest/Ubuntu-K8s_latest-containerd-flannel.sh | bash
 ```
