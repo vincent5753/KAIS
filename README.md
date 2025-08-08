@@ -7,10 +7,10 @@ KAIS is short for `Kubernetes Auto Install Script`, it is made for a more easy w
 Current Supported ENVs
 |OS \ Arch|amd64(x86_64)|arm64(aarch64)|其他 (other)|最後驗證版本 (Last Verified Version)|
 |-|:-:|:-:|:-:|:-:|
-|Ubuntu|✅|✅|❌|24@250705|
-|Rocky Linux|✅|✅|❌|10@250706|
-|RHEL|✅|✅|❌|10@250711|
-|Debian|✅|✅|❌|12@250717|
+|Ubuntu|✅|✅|❌|24@250808|
+|Rocky Linux|✅|✅|❌|10@250808|
+|RHEL|✅|✅|❌|10@250808|
+|Debian|✅|✅|❌|12@250808|
 |Arch|To be added|To be added|❌|N/A|
 
 
