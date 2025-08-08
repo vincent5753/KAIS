@@ -184,10 +184,29 @@ remove_node_taint(){
 }
 
 
+get_flannel_latest_version(){
+
+    local FLANNEL_LATEST_URL="https://api.github.com/repos/flannel-io/flannel/releases/latest"
+
+    _info "Fetching latest stable Flannel version..."
+
+    FLANNEL_VERSION=$(curl -Ls "${FLANNEL_LATEST_URL}" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+
+    if [ -z "$FLANNEL_VERSION" ]; then
+        _error "Could not fetch Flannel version from ${FLANNEL_LATEST_URL}"
+        exit 1
+    fi
+
+    _info "Latest Flannel Version: ${FLANNEL_VERSION}"
+
+}
+
+
 main(){
 
     # Gather the init info for installation
     get_k8s_relaese_version
+    get_flannel_latest_version
     # SELinux is enabled by default on Rocky Linux
     disable_selinux
     # Install yum-utils (yum-config-manager)
@@ -206,7 +225,7 @@ main(){
     copy_kube_config
     remove_node_taint
     ## Apply CNI
-    kubectl apply -f https://github.com/flannel-io/flannel/releases/download/v0.24.4/kube-flannel.yml
+    kubectl apply -f https://github.com/flannel-io/flannel/releases/download/${FLANNEL_VERSION}/kube-flannel.yml
 
 }
 
