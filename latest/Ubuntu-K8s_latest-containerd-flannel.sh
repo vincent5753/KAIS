@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 TEMP_DIR="/tmp/kais"
 
 PACKAGES_TO_INSTALL=(

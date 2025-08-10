@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # This script installs a single-node Kubernetes cluster with containerd and flannel.
 # It supports both Debian-based (Ubuntu) and RHEL-based (Rocky Linux) distributions.
 

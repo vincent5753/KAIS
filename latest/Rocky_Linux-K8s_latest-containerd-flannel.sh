@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 K8S_CONTROL_PLANE_PACKAGE=(
     kubelet
     kubeadm
