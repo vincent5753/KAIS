@@ -25,7 +25,7 @@ K8S_WORKER_NODE_PACKAGE=(
 
 
 _mk_tmp_dir(){
-    mkdir "${TEMP_DIR}"
+    mkdir -p "${TEMP_DIR}"
 }
 
 
@@ -49,36 +49,30 @@ _error(){
 _get_latest_docker_version(){
 
     local request_result
-    request_result=$(curl https://download.docker.com/linux/${OS_ID}/dists/${OS_CODE_NAME}/pool/stable/${CPU_ARCH}/)
+    # Ensure OS_ID is lowercase for the URL
+    local target_url="https://download.docker.com/linux/${OS_ID}/dists/${OS_CODE_NAME}/pool/stable/${CPU_ARCH}/"
+
+    _info "Fetching versions from: ${target_url}"
+    request_result=$(curl -sL "${target_url}")
 
     for package in docker-ce docker-ce-cli containerd.io
     do
+        # This regex captures the full version string including metadata (~ubuntu...)
+        # It looks for: package_ [capture everything] _cpu_arch.deb
+        package_version=$(echo "${request_result}" | grep -oP "${package}_\K[^_]+(?=_${CPU_ARCH}\.deb)" | sort -V | tail -n 1)
 
-        package_version=$(echo "${request_result}" | grep "${package}_" | sed -n "s/.*${package}_\([^_]*\)_${CPU_ARCH}\.deb.*/\1/p" | sort -V | tail -n 1 | cut -d'~' -f1)
+        if [ -z "${package_version}" ]; then
+            _error "Could not find version for ${package}"
+            continue
+        fi
 
-    case "${package}" in
-
-        docker-ce)
-        dockerce_version="${package_version}"
-        ;;
-
-        docker-ce-cli)
-        dockercecli_version="${package_version}"
-        ;;
-
-        containerd.io)
-        containerd_version="${package_version}"
-        ;;
-
-        *)
-        _error "Unexpected package."
-        ;;
-    esac
-
+        case "${package}" in
+            docker-ce)     dockerce_version="${package_version}" ;;
+            docker-ce-cli) dockercecli_version="${package_version}" ;;
+            containerd.io) containerd_version="${package_version}" ;;
+        esac
     done
-
 }
-
 
 
 check_command_available(){
@@ -223,34 +217,47 @@ mark_apt_packages(){
 install_docker_runtime(){
 
     _info "Checking if iptables is installed"
-    if check_command_available "iptables"
-    then
+    if check_command_available "iptables"; then
         _info "iptables is installed."
     else
-        _info "iptables is NOT installed, installing it cuz docker-ce needs it."
+        _info "iptables is NOT installed, installing it because docker-ce needs it."
         install_apt_packages iptables
     fi
 
+    local docker_deb_dir="${TEMP_DIR}/docker_debs"
     base_url="https://download.docker.com/linux/${OS_ID}/dists/${OS_CODE_NAME}/pool/stable/${CPU_ARCH}"
 
-    _info "Download and installing debs from docker"
-    for DEB in ${DOCKER_DEB[@]}
-    do
-        _info "Download and installing ${DEB}"
-        curl -s --create-dirs -o "${TEMP_DIR}/docker_debs/${DEB}" "${base_url}/$DEB"
-        sudo dpkg -i "${TEMP_DIR}/docker_debs/${DEB}"
+    # Step 1: Download all required debs first
+    _info "Downloading debs from Docker repository..."
+    for DEB in "${DOCKER_DEB[@]}"; do
+        _info "Fetching: ${DEB}"
+        curl -s --create-dirs -L -o "${docker_deb_dir}/${DEB}" "${base_url}/${DEB}"
     done
 
-    # containerd
+    # Step 2: Atomic installation
+    # Passing all files to dpkg at once lets it resolve dependencies (CLI vs Engine) internally.
+    _info "Installing Docker packages via dpkg..."
+    sudo dpkg -i "${docker_deb_dir}/"*.deb || {
+        _error "dpkg encountered issues; attempting to fix dependencies with apt..."
+        sudo apt-get install -f -y
+    }
+
+    # Step 3: Containerd configuration (Crucial for K8s)
     _info "Setting up containerd"
     sudo mkdir -p /etc/containerd
-    sudo containerd config default | sudo tee /etc/containerd/config.toml
+    # Generate default config and enable SystemdCgroup
+    sudo containerd config default | sudo tee /etc/containerd/config.toml > /dev/null
     sudo sed -i "s/SystemdCgroup = false/SystemdCgroup = true/g" /etc/containerd/config.toml
-    grep SystemdCgroup /etc/containerd/config.toml
+
+    _info "Verifying SystemdCgroup setting:"
+    grep "SystemdCgroup" /etc/containerd/config.toml
+
     sudo systemctl restart containerd
 
-_info "Changing docker cgroup driver to systemd"
-cat <<EOF | sudo tee /etc/docker/daemon.json
+    # Step 4: Docker Engine configuration
+    _info "Changing docker cgroup driver to systemd"
+    sudo mkdir -p /etc/docker
+    cat <<EOF | sudo tee /etc/docker/daemon.json
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
   "log-driver": "json-file",
@@ -261,15 +268,21 @@ cat <<EOF | sudo tee /etc/docker/daemon.json
 }
 EOF
 
+    # Step 5: Post-install setup
     sudo mkdir -p /etc/systemd/system/docker.service.d
+
     _info "Adding current user to docker group"
-    sudo usermod -aG docker $(logname)
-    _info "Restarting docker"
+    # Using $USER as a fallback if logname fails in certain shell environments
+    CURRENT_USER=$(logname 2>/dev/null || echo $USER)
+    sudo usermod -aG docker "$CURRENT_USER"
+
+    _info "Reloading systemd and restarting Docker"
     sudo systemctl daemon-reload
     sudo systemctl enable docker
     sudo systemctl restart docker
-    systemctl status --no-pager docker
 
+    # Final health check
+    systemctl status --no-pager docker | grep "Active:"
 }
 
 
@@ -290,9 +303,8 @@ do_k8s_tweaks(){
     _info "Disabling off swap"
     sudo swapoff -a
     sudo sed -i '/swap/s/^/#/' /etc/fstab
-    [ ! -d "/etc/systemd/system-generators" ] && sudo mkdir -p "/etc/systemd/system-generators" && _info "Created path: /etc/systemd/system-generators"
+    sudo ln -sf /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
     _info "Link /dev/null to /etc/systemd/system-generators/systemd-gpt-auto-generator to avoid systemd auto generate swap service"
-    sudo ln -s /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
 
 cat << EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
@@ -316,7 +328,7 @@ copy_kube_config(){
 
     _info "Copy kube config to home directory"
     mkdir -p $HOME/.kube
-    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
     sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 }
@@ -325,8 +337,8 @@ copy_kube_config(){
 remove_node_taint(){
 
     _info "Remove taint from the node"
-    kubectl taint nodes --all node-role.kubernetes.io/master-
-    kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+    kubectl taint nodes --all node-role.kubernetes.io/master- || true
+    kubectl taint nodes --all node-role.kubernetes.io/control-plane- || true
 
 }
 
@@ -351,6 +363,8 @@ get_flannel_latest_version(){
 
 main(){
 
+    trap _clean_up EXIT
+
     # Gather the init info for installation
     get_os_info
     get_k8s_relaese_version
@@ -366,8 +380,8 @@ main(){
     fi
     DOCKER_DEB=(
         "containerd.io_${containerd_version}_${CPU_ARCH}.deb"
-        "docker-ce_${dockerce_version}~ubuntu.${OS_RELESE_VER}~${OS_CODE_NAME}_${CPU_ARCH}.deb"
-        "docker-ce-cli_${dockercecli_version}~ubuntu.${OS_RELESE_VER}~${OS_CODE_NAME}_${CPU_ARCH}.deb"
+        "docker-ce_${dockerce_version}_${CPU_ARCH}.deb"
+        "docker-ce-cli_${dockercecli_version}_${CPU_ARCH}.deb"
     )
     install_docker_runtime
     # Install Kubernetes
@@ -376,7 +390,9 @@ main(){
     install_apt_packages "${K8S_CONTROL_PLANE_PACKAGE[@]}"
     mark_apt_packages "${K8S_CONTROL_PLANE_PACKAGE[@]}"
     sudo systemctl enable --now kubelet
-    sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --image-repository=registry.k8s.io --v=6
+    if [ ! -f /etc/kubernetes/admin.conf ]; then
+        sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --image-repository=registry.k8s.io --v=6
+    fi
     copy_kube_config
     remove_node_taint
     ## Apply CNI

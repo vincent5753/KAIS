@@ -43,6 +43,7 @@ sudo apt-get update
 
 # Essential Tweaks
 sudo swapoff -a
+sudo ln -sf /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
 cat << EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
@@ -68,7 +69,7 @@ sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 -
 
 mkdir -p $HOME/.kube
 # Copy the kubeconfig file to the .kube directory
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
 # Change ownership of the kubeconfig file to your user
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
