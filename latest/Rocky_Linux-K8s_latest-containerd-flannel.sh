@@ -142,8 +142,6 @@ do_k8s_tweaks(){
     sudo swapoff -a
     # sudo sed -i '/swap/s/^/#/' /etc/fstab
     sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-    sudo ln -sf /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
-    _info "Link /dev/null to /etc/systemd/system-generators/systemd-gpt-auto-generator to avoid systemd auto generate swap service"
 cat << EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter

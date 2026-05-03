@@ -207,8 +207,10 @@ do_k8s_tweaks(){
     _info "Disabling off swap"
     sudo swapoff -a
     sudo sed -i '/swap/s/^/#/' /etc/fstab
-    sudo ln -sf /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
-    _info "Link /dev/null to /etc/systemd/system-generators/systemd-gpt-auto-generator to avoid systemd auto generate swap service"
+    if [ "$OS_FAMILY" == "debian" ]; then
+        sudo ln -sf /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
+        _info "Link /dev/null to /etc/systemd/system-generators/systemd-gpt-auto-generator to avoid systemd auto generate swap service"
+    fi
 
 cat << EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
