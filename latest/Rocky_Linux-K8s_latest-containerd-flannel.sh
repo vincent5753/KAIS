@@ -88,7 +88,7 @@ install_dnf_packages(){
     fi
 
     _info "Updating package lists..."
-    sudo dnf check-update -y
+    sudo dnf check-update -y || [ $? -eq 100 ]
 
     _info "Installing specified packages..."
     for package in "$@"; do
