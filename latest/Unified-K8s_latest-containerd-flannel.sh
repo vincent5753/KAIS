@@ -207,9 +207,8 @@ do_k8s_tweaks(){
     _info "Disabling off swap"
     sudo swapoff -a
     sudo sed -i '/swap/s/^/#/' /etc/fstab
-    [ ! -d "/etc/systemd/system-generators" ] && sudo mkdir -p "/etc/systemd/system-generators" && _info "Created path: /etc/systemd/system-generators"
+    sudo ln -sf /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
     _info "Link /dev/null to /etc/systemd/system-generators/systemd-gpt-auto-generator to avoid systemd auto generate swap service"
-    sudo ln -s /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
 
 cat << EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
@@ -242,8 +241,8 @@ copy_kube_config(){
 remove_node_taint(){
 
     _info "Remove taint from the node"
-    kubectl taint nodes --all node-role.kubernetes.io/master-
-    kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+    kubectl taint nodes --all node-role.kubernetes.io/master- || true
+    kubectl taint nodes --all node-role.kubernetes.io/control-plane- || true
 
 }
 
@@ -318,7 +317,9 @@ main(){
     fi
 
     sudo systemctl enable --now kubelet
-    sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --image-repository=registry.k8s.io --v=6
+    if [ ! -f /etc/kubernetes/admin.conf ]; then
+        sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --image-repository=registry.k8s.io --v=6
+    fi
     copy_kube_config
     remove_node_taint
     kubectl apply -f https://github.com/flannel-io/flannel/releases/download/${FLANNEL_VERSION}/kube-flannel.yml

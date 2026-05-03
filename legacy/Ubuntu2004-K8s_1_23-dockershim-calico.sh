@@ -63,6 +63,7 @@ overlay
 br_netfilter
 EOF
 sudo swapoff -a
+sudo ln -sf /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
 sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 sudo free -m
 source <(kubectl completion bash)
@@ -72,7 +73,7 @@ echo "source <(kubectl completion bash)" >> ~/.bashrc
 sudo kubeadm init --pod-network-cidr=192.168.0.0/16
 ## Copy Config
 mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 ### calico CNI
@@ -85,5 +86,5 @@ watch -n 1 kubectl get nodes
 watch kubectl get pods -n calico-system
 
 ## Taint(if needed)
-kubectl taint nodes --all node-role.kubernetes.io/master-
+kubectl taint nodes --all node-role.kubernetes.io/master- || true
 #kubectl taint nodes --all node-role.kubernetes.io/control-plane- node-role.kubernetes.io/master-

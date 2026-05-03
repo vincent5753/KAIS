@@ -47,6 +47,7 @@ sudo apt-get update
 
 # Essential Tweaks
 sudo swapoff -a
+sudo ln -sf /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
 cat << EOF | sudo tee /etc/modules-load.d/k8s.conf
 overlay
 br_netfilter
@@ -72,7 +73,7 @@ sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 -
 
 ## Copy Config
 mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 ## Flannel CNI
@@ -83,4 +84,4 @@ kubectl cluster-info
 watch -n 1 kubectl get nodes -o wide
 
 ## Taint(if needed)
-kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+kubectl taint nodes --all node-role.kubernetes.io/control-plane- || true

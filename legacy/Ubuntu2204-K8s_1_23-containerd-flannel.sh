@@ -58,6 +58,7 @@ EOF
 sudo modprobe overlay
 sudo modprobe br_netfilter
 sudo swapoff -a
+sudo ln -sf /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
 
 # Disable swap
 sed -e '/swap/ s/^#*/# /' -i /etc/fstab
@@ -81,7 +82,7 @@ kubeadm config images pull --image-repository=registry.k8s.io --kubernetes-versi
 sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --v=6
 ## Copy Config
 mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 ## Flannel CNI
@@ -92,4 +93,4 @@ kubectl cluster-info
 watch -n 1 kubectl get nodes -o wide
 
 ## Taint(if needed)
-kubectl taint nodes --all node-role.kubernetes.io/master-
+kubectl taint nodes --all node-role.kubernetes.io/master- || true

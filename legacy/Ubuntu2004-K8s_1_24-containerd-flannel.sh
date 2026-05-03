@@ -9,8 +9,9 @@ sudo apt update
 apt-cache madison kubeadm
 sudo apt-get install -y kubelet kubeadm kubectl
 
-sudo sed -ri 's/.*swap.*/#&/' /etc/fstab
 sudo swapoff -a
+sudo sed -i '/swap/s/^/#/' /etc/fstab
+sudo ln -sf /dev/null /etc/systemd/system-generators/systemd-gpt-auto-generator
 
 mkdir containerd && cd containerd
 
@@ -64,10 +65,10 @@ kubeadm config images pull --image-repository=registry.k8s.io --kubernetes-versi
 sudo kubeadm init --service-cidr=10.96.0.0/12 --pod-network-cidr=10.244.0.0/16 --image-repository=registry.k8s.io --v=6
 
 mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-kubectl taint nodes --all node-role.kubernetes.io/master-
-kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+kubectl taint nodes --all node-role.kubernetes.io/master- || true
+kubectl taint nodes --all node-role.kubernetes.io/control-plane- || true
 kubectl apply -f https://github.com/flannel-io/flannel/releases/download/v0.24.4/kube-flannel.yml
 watch -n 5 kubectl get po -A -o wide
